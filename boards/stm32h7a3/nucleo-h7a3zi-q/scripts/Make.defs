@@ -1,0 +1,32 @@
+############################################################################
+# vendor/st/boards/stm32h7a3/nucleo-h7a3zi-q/scripts/Make.defs
+############################################################################
+
+include $(TOPDIR)/.config
+include $(TOPDIR)/tools/Config.mk
+
+define POSTBUILD
+	$(OBJCOPY) -O binary nuttx nuttx.bin
+	$(OBJCOPY) -O ihex nuttx nuttx.hex
+endef
+
+include $(TOPDIR)/arch/arm/src/armv7-m/Toolchain.defs
+
+ARCHSCRIPT += $(BOARD_DIR)$(DELIM)scripts$(DELIM)flash.ld
+
+ARCHPICFLAGS = -fpic
+
+CFLAGS := $(ARCHCFLAGS) $(ARCHOPTIMIZATION) $(ARCHCPUFLAGS) \
+          $(ARCHINCLUDES) $(ARCHDEFINES) $(EXTRAFLAGS)
+CPICFLAGS = $(ARCHPICFLAGS) $(CFLAGS)
+CXXFLAGS := $(ARCHCXXFLAGS) $(ARCHOPTIMIZATION) $(ARCHCPUFLAGS) \
+            $(ARCHXXINCLUDES) $(ARCHDEFINES) $(EXTRAFLAGS)
+CXXPICFLAGS = $(ARCHPICFLAGS) $(CXXFLAGS)
+CPPFLAGS := $(ARCHINCLUDES) $(ARCHDEFINES) $(EXTRAFLAGS)
+AFLAGS := $(CFLAGS) -D__ASSEMBLY__
+
+NXFLATLDFLAGS1 = -r -d -warn-common
+NXFLATLDFLAGS2 = $(NXFLATLDFLAGS1) \
+                 -T$(TOPDIR)/binfmt/libnxflat/gnu-nxflat-pcrel.ld \
+                 -no-check-sections
+LDNXFLATFLAGS = -e main -s 2048

@@ -1,0 +1,5 @@
+*.o
+*.a
+*.dep
+.depend
+Make.dep
